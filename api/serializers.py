@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from content.models import Entry
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -27,3 +28,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class UserDataSerializer(serializers.ModelSerializer):
+    """A serializer for profile entry item."""
+    class Meta:
+        model = Entry
+        fields = ['id', 'url', 'author', 'title', 'text', 'date_posted']
+        extra_kwargs = {'author': {'read_only': True}}

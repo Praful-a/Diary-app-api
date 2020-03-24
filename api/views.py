@@ -10,8 +10,9 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from django.contrib.auth.models import User
-from .serializers import UserProfileSerializer
+from .serializers import UserProfileSerializer, UserDataSerializer
 from . import permissions
+from content.models import Entry
 # Create your views here.
 
 
@@ -34,3 +35,14 @@ class LoginViewSet(viewsets.ViewSet):
         """Use the ObtainAuthToken APIView to validate and create a token."""
 
         return ObtainAuthToken().post(request)
+
+
+class UserDataViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile entry data."""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = UserDataSerializer
+    queryset = Entry.objects.all()
+
+    def perform_create(self, serializer):
+        """Sets the user profile to the logged in user."""
+        serializer.save(author=self.request.user)
