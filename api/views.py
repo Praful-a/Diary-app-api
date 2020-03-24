@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 
 from django.contrib.auth.models import User
 from .serializers import UserProfileSerializer
+from . import permissions
 # Create your views here.
 
 
@@ -19,3 +20,17 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     serializer_class = UserProfileSerializer
     queryset = User.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.UpdateOwnProfile,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username', 'email',)
+
+
+class LoginViewSet(viewsets.ViewSet):
+    """Checks email and password and return the auth toke."""
+    serializer_class = AuthTokenSerializer
+
+    def create(self, request):
+        """Use the ObtainAuthToken APIView to validate and create a token."""
+
+        return ObtainAuthToken().post(request)
