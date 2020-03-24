@@ -42,6 +42,7 @@ class UserDataViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     serializer_class = UserDataSerializer
     queryset = Entry.objects.all()
+    permission_classes = (permissions.PostOwnEntry, IsAuthenticated)
 
     def perform_create(self, serializer):
         """Sets the user profile to the logged in user."""
